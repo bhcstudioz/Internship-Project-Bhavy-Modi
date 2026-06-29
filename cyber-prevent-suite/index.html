@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Operations | BHC Studioz</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body class="auth-pending">
+    <!-- Matrix Rain Canvas Background -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- CRT Overlay effects -->
+    <div class="crt-overlay"></div>
+    <div class="scanlines"></div>
+
+    <!-- Sidebar Backdrop for Mobile slide-out -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <div class="hacker-console">
+        <!-- SIDEBAR -->
+        <aside class="console-sidebar">
+            <div class="sidebar-header">
+                <pre class="ascii-logo">
+ ██████╗██╗   ██╗██████╗ ███████╗██████╗ 
+██╔════╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔══██╗
+██║      ╚████╔╝ ██████╔╝█████╗  ██████╔╝
+██║       ╚██╔╝  ██╔══██╗██╔══╝  ██╔══██╗
+╚██████╗   ██║   ██████╔╝███████╗██║  ██║
+ ╚═════╝   ╚═╝   ╚═════╝ ╚══════╝╚═╝  ╚═╝
+                </pre>
+                <div class="console-status-badge">
+                    <span class="pulse-indicator status-online"></span>
+                    <span class="status-text">SYS_OPERATOR: ACTIVE</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">SYS_OPTIONS</div>
+                <button class="nav-btn active" data-target="dashboard">
+                    <span class="nav-cmd">></span> DASHBOARD
+                </button>
+                <button class="nav-btn" data-target="threat-sim">
+                    <span class="nav-cmd">></span> THREAT_SIM
+                </button>
+                <button class="nav-btn" data-target="trust-breach">
+                    <span class="nav-cmd">></span> TRUST_BREACH
+                </button>
+                <button class="nav-btn" data-target="password-checker">
+                    <span class="nav-cmd">></span> PASS_CHECKER
+                </button>
+                <button class="nav-btn" data-target="sms-shield">
+                    <span class="nav-cmd">></span> BOMB_SHIELD
+                </button>
+                <button class="nav-btn" data-target="footprint-checker">
+                    <span class="nav-cmd">></span> FOOTPRINT_CHECKER
+                </button>
+
+            </nav>
+
+            <div class="sidebar-system-logs">
+                <div class="logs-header">
+                    <span>LIVE_SYS_LOGS</span>
+                    <span class="log-blink">_</span>
+                </div>
+                <div class="logs-container" id="logs-container">
+                    <!-- Logs dynamically appended by JS -->
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="maturity-summary-widget">
+                    <div class="maturity-widget-label">DECODED_RANK:</div>
+                    <div class="maturity-widget-value" id="sidebar-rank">NOVICE (0%)</div>
+                    <div class="maturity-widget-progress">
+                        <div class="maturity-widget-progress-fill" id="sidebar-rank-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                <button class="terminal-btn-sm logout-btn" id="btn-logout" style="width: 100%; margin-top: 10px; border-color: var(--neon-red); text-shadow: var(--glow-shadow-red); display: none;">TERMINATE_SESSION</button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEWPORT -->
+        <main class="console-main">
+            <!-- Header bar -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="mobile-menu-trigger" id="mobile-menu-toggle">[MENU]</button>
+                    <span class="path-indicator">SYS@CYBER_OPS_CONSOLE:~#</span>
+                    <span class="current-path" id="current-path-text">dashboard</span>
+                </div>
+                <div class="header-right">
+                    <div class="header-stat">
+                        <span class="stat-lbl">THREAT_LEVEL:</span>
+                        <span class="stat-val text-neon-green" id="header-threat-level">STABLE</span>
+                    </div>
+                    <div class="header-stat">
+                        <span class="stat-lbl">DEFENSE_INDEX:</span>
+                        <span class="stat-val text-neon-cyan" id="header-defense-index">0%</span>
+                    </div>
+                    <div class="header-stat">
+                        <span class="stat-lbl">TIMESTAMP:</span>
+                        <span class="stat-val" id="console-time">00:00:00</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONSOLE CONTENT PANELS -->
+            <div class="panel-viewport">
+                <!-- 1. DASHBOARD PANEL -->
+                <section class="console-panel active" id="panel-dashboard">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2>OVERVIEW // SYSTEM_DEFENSE_STATUS</h2>
+                        <button class="terminal-btn help-toggle-btn" data-help="dashboard">[?] HELP_PROTOCOL</button>
+                    </div>
+                    <div class="help-protocol-box hidden" id="help-dashboard">
+                        <div class="help-title">> PROTOCOL: GENERAL_OPERATIONS_MANUAL</div>
+                        <ul class="help-list">
+                            <li><span class="help-bullet">*</span> <strong>Shield Integrity:</strong> The central circle gauge monitors overall safety health. Complete all 10 simulator levels and run audits to raise defense indices to 100%.</li>
+                            <li><span class="help-bullet">*</span> <strong>Clearance Rank:</strong> Clearance is measured in XP. Audit scans and level completions grant XP, promoting your profile from NOVICE to SPECIALIST and CYBER_CHIEF.</li>
+                            <li><span class="help-bullet">*</span> <strong>Interactive Modules:</strong> Select modules from the left command options sidebar or click "RUN_MODULE >" links directly on the dashboard cards.</li>
+                        </ul>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="dash-card main-stats-card">
+                            <h3>SEC_INTEGRITY_SHIELD</h3>
+                            <div class="gauge-wrapper">
+                                <svg class="circular-gauge" viewBox="0 0 100 100">
+                                    <circle class="bg-circle" cx="50" cy="50" r="40" />
+                                    <circle class="fg-circle" id="dashboard-health-gauge" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="251.2" />
+                                </svg>
+                                <div class="gauge-label">
+                                    <span class="gauge-value" id="dashboard-health-val">0%</span>
+                                    <span class="gauge-sub">SEC_HEALTH</span>
+                                </div>
+                            </div>
+                            <div class="shield-status-box">
+                                <div class="shield-indicator" id="shield-status-indicator">STANDBY</div>
+                                <p class="shield-desc" id="shield-status-desc">Complete daily habits and threat simulations to boost integrity shield strength.</p>
+                            </div>
+                        </div>
+
+                        <div class="dash-card alerts-ticker-card">
+                            <h3>ALERTS_MONITOR</h3>
+                            <div class="alerts-container" id="dash-alerts-container">
+                                <!-- Dynamic alerts -->
+                            </div>
+                        </div>
+
+
+                        <div class="dash-card tool-link-card" data-target="threat-sim">
+                            <div class="tool-link-header">
+                                <span class="tool-id">[ATTACK_SANDBOX]</span>
+                                <span class="tool-status text-neon-cyan">ENGAGED</span>
+                            </div>
+                            <h3>Threat Simulator Game</h3>
+                            <p>Dissect simulated emails, texts, and websites. Trace elements of compromise and unlock developer clearance ranks.</p>
+                            <span class="action-prompt">INIT_SIMULATOR ></span>
+                        </div>
+
+                        <div class="dash-card tool-link-card" data-target="trust-breach">
+                            <div class="tool-link-header">
+                                <span class="tool-id">[INTEL_SCANNER]</span>
+                                <span class="tool-status text-neon-green">ONLINE</span>
+                            </div>
+                            <h3>Trust & Breach Center</h3>
+                            <p>Extract security headers, compute registrar domain age credibility, and cross-reference emails with leaked credential databases.</p>
+                            <span class="action-prompt">ACCESS_DATABASE ></span>
+                        </div>
+
+
+                        <div class="dash-card tool-link-card" data-target="password-checker">
+                            <div class="tool-link-header">
+                                <span class="tool-id">[SYS_PASS_AUDIT]</span>
+                                <span class="tool-status text-neon-pink">READY</span>
+                            </div>
+                            <h3>Password Strength Auditor</h3>
+                            <p>Check password entropy scores, inspect dictionary match vectors, and upgrade vulnerable credentials using a local encryption compiler.</p>
+                            <span class="action-prompt">AUDIT_CREDENTIALS ></span>
+                        </div>
+
+                        <div class="dash-card tool-link-card" data-target="sms-shield">
+                            <div class="tool-link-header">
+                                <span class="tool-id">[BOMB_SHIELD]</span>
+                                <span class="tool-status text-neon-orange">READY</span>
+                            </div>
+                            <h3>SMS Bomb Shield</h3>
+                            <p>Simulate SMS bomb floods on mobile OTP ports and activate the firewall protection layers to rate-limit attackers.</p>
+                            <span class="action-prompt">LAUNCH_SHIELD ></span>
+                        </div>
+
+                        <div class="dash-card tool-link-card" data-target="footprint-checker">
+                            <div class="tool-link-header">
+                                <span class="tool-id">[DIGITAL_FOOTPRINT_AUDITOR]</span>
+                                <span class="tool-status text-neon-cyan">READY</span>
+                            </div>
+                            <h3>Digital Footprint Checker</h3>
+                            <p>Probe username registrations, analyze photo EXIF metadata locally for location leaks, and generate Google Dorking queries.</p>
+                            <span class="action-prompt">RUN_AUDIT ></span>
+                        </div>
+                        
+                        <!-- Dashboard PDF Report Card -->
+                        <div class="pdf-report-generator-box" style="margin-top: 30px; border-top: 1px dashed var(--border-color); padding-top: 20px; grid-column: span 3;">
+                            <h4 style="font-size: 13px; letter-spacing: 1px; color: var(--neon-purple); margin-bottom: 8px;">EXPORT_OPERATIONS_SUMMARY_REPORT</h4>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Compile and export security posture telemetry for this dashboard or all suite pages into secure, encrypted PDF documents.</p>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                                <button class="terminal-btn btn-download-pdf" data-module="dashboard" style="border-color: var(--neon-purple); color: var(--neon-purple); text-shadow: var(--glow-shadow-purple);">DOWNLOAD_DASHBOARD_PDF</button>
+                                <button class="terminal-btn btn-download-pdf" data-module="master" style="border-color: var(--neon-cyan); color: var(--neon-cyan); text-shadow: var(--glow-shadow-cyan);">DOWNLOAD_MASTER_SUMMARY_PDF</button>
+                            </div>
+                            <p class="pdf-decryption-note" style="font-size: 11px; color: var(--text-dim); margin-top: 8px; line-height: 1.4;"></p>
+                        </div>
+                    </div>
+                </section>
+
+
+                <!-- 3. THREAT SIMULATOR PANEL -->
+                <section class="console-panel" id="panel-threat-sim">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2>MODULE // ATTACK_SIMULATION_SANDBOX</h2>
+                        <button class="terminal-btn help-toggle-btn" data-help="threat-sim">[?] HELP_PROTOCOL</button>
+                    </div>
+                    <div class="help-protocol-box hidden" id="help-threat-sim">
+                        <div class="help-title">> PROTOCOL: SIMULATION_TACTICAL_MANUAL</div>
+                        <ul class="help-list">
+                            <li><span class="help-bullet">*</span> <strong>Objective:</strong> Analyze the provided email, text, or website mockup for security anomalies.</li>
+                            <li><span class="help-bullet">*</span> <strong>Discrepancies:</strong> Click directly on compromised spots (sender address spoofs, threat headers, links) to flag them.</li>
+                            <li><span class="help-bullet">*</span> <strong>Defusal:</strong> Finding all indicators of compromise (IOCs) without false clicks defuses the scenario, awarding maximum XP.</li>
+                            <li><span class="help-bullet">*</span> <strong>Navigation:</strong> Click "BACK TO SIMULATOR SELECTION" to return to the level grid at any point.</li>
+                        </ul>
+                    </div>
+                    <div class="panel-content threat-sim-container">
+                        <!-- Level Select screen -->
+                        <div class="sim-selector-screen" id="sim-selector-screen">
+                            <h3>SELECT_INCIDENT_SCENARIO</h3>
+                            <p class="section-desc">Analyze raw templates of common attack vectors. Click hotspots to locate warning indicators (IOCs) and defuse the vector.</p>
+                            
+                            <div class="scenario-list">
+                                <div class="scenario-card" data-level="1">
+                                    <div class="scenario-badge">LEVEL_01</div>
+                                    <h4>Corporate Phishing Email</h4>
+                                    <p>An urgent billing notification from a popular streaming platform. Find 3 discrepancies to secure the inbox.</p>
+                                    <button class="terminal-btn-sm">MOUNT_SIMULATOR</button>
+                                </div>
+                                <div class="scenario-card" data-level="2">
+                                    <div class="scenario-badge">LEVEL_02</div>
+                                    <h4>MFA Smishing Alert</h4>
+                                    <p>An SMS emergency broadcast purporting to be from your central banking authority. Detect the social engineering trigger.</p>
+                                    <button class="terminal-btn-sm">MOUNT_SIMULATOR</button>
+                                </div>
+                                <div class="scenario-card" data-level="3">
+                                    <div class="scenario-badge">LEVEL_03</div>
+                                    <h4>Cloned SSO Portal</h4>
+                                    <p>A spoofed portal targeting corporate SSO credentials. Identify infrastructure typos before logging in.</p>
+                                    <button class="terminal-btn-sm">MOUNT_SIMULATOR</button>
+                                </div>
+                                <div class="scenario-card" data-level="4">
+                                    <div class="scenario-badge">LEVEL_04</div>
+                                    <h4>Package Redirection SMS</h4>
+                                    <p>A postal delivery warning requesting a redirection fee. Find 3 indicators to avoid payment card theft.</p>
+                                    <button class="terminal-btn-sm">MOUNT_SIMULATOR</button>
+                                </div>
+                                <div class="scenario-card" data-level="5">
+                                    <div class="scenario-badge">LEVEL_05</div>
+                                    <h4>Scareware Support Popup</h4>
+                                    <p>A browser popup warning of device infection. Detect 3 scareware vectors before calling support.</p>
+                                    <button class="terminal-btn-sm">MOUNT_SIMULATOR</button>
+                                </div>
+                                <div class="scenario-card" data-level="6">
+                                    <div class="scenario-badge">LEVEL_06</div>
+                                    <h4>OAuth Permission Consent</h4>
+                                    <p>A calendar utility requesting high-severity permissions. Inspect 3 flags to protect your profile.</p>
+                                    <button class="terminal-btn-sm">MOUNT_SIMULATOR</button>
+                                </div>
+                                <div class="scenario-card" data-level="7">
+                                    <div class="scenario-badge">LEVEL_07</div>
+                                    <h4>Executive Gift Card Spear</h4>
+                                    <p>An urgent executive email requesting card codes. Trace 3 spear-phishing parameters.</p>
+                                    <button class="terminal-btn-sm">MOUNT_SIMULATOR</button>
+                                </div>
+                                <div class="scenario-card" data-level="8">
+                                    <div class="scenario-badge">LEVEL_08</div>
+                                    <h4>Fake Billing Invoice</h4>
+                                    <p>An invoice detailing massive bank charges. Identify 3 indicators of a malware installer setup.</p>
+                                    <button class="terminal-btn-sm">MOUNT_SIMULATOR</button>
+                                </div>
+                                <div class="scenario-card" data-level="9">
+                                    <div class="scenario-badge">LEVEL_09</div>
+                                    <h4>Wi-Fi Evil Twin Portal</h4>
+                                    <p>A router setup wizard requesting WPA2 credentials. Find 3 indicators of wireless hijacking.</p>
+                                    <button class="terminal-btn-sm">MOUNT_SIMULATOR</button>
+                                </div>
+                                <div class="scenario-card" data-level="10">
+                                    <div class="scenario-badge">LEVEL_10</div>
+                                    <h4>Crypto Doubling Giveaway</h4>
+                                    <p>A celebrity tweet promoting high deposit returns. Analyze 3 indicators of an online crypto scan.</p>
+                                    <button class="terminal-btn-sm">MOUNT_SIMULATOR</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Threat Sim PDF Report Card -->
+                            <div class="pdf-report-generator-box" style="margin-top: 30px; border-top: 1px dashed var(--border-color); padding-top: 20px; width: 100%;">
+                                <h4 style="font-size: 13px; letter-spacing: 1px; color: var(--neon-orange); margin-bottom: 8px;">EXPORT_THREAT_SIMULATION_REPORT</h4>
+                                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Compile and export all logs, alerts, and telemetry for this module into a secure, encrypted PDF document.</p>
+                                <button class="terminal-btn btn-download-pdf" data-module="threat-sim" style="border-color: var(--neon-orange); color: var(--neon-orange); text-shadow: var(--glow-shadow-orange);">DOWNLOAD_ENCRYPTED_PDF</button>
+                                <p class="pdf-decryption-note" style="font-size: 11px; color: var(--text-dim); margin-top: 8px; line-height: 1.4;"></p>
+                            </div>
+                        </div>
+
+                        <!-- Active Sandbox Screen -->
+                        <div class="sim-sandbox-screen hidden" id="sim-sandbox-screen">
+                            <div class="sandbox-header">
+                                <button class="terminal-btn-sm text-neon-orange" id="sim-back-btn">&lt; BACK_TO_MENU</button>
+                                <span class="sandbox-title" id="sandbox-scenario-title">SCENARIO: PHISHING_EMAIL</span>
+                                <div class="sandbox-status">
+                                    <span>FOUND: <strong id="sim-found-count">0</strong>/<strong id="sim-total-count">3</strong></span>
+                                    <span>SCORE: <strong id="sim-current-score" class="text-neon-cyan">0</strong></span>
+                                </div>
+                            </div>
+
+                            <div class="sandbox-body">
+                                <div class="sandbox-workspace">
+                                    <!-- Interactive Mockup Container -->
+                                    <div class="mockup-frame" id="mockup-container">
+                                        <!-- Dynamic templates loaded here -->
+                                    </div>
+                                </div>
+
+                                <div class="sandbox-control-panel">
+                                    <h3>SIMULATION_CONTROLS</h3>
+                                    <p class="section-desc">Audit the asset in the viewport. Click directly on any element you believe shows signs of social engineering or technical forgery.</p>
+                                    
+                                    <div class="hotspot-clues" id="sandbox-clues-list">
+                                        <!-- Interactive helper/clues checklist -->
+                                    </div>
+
+                                    <div class="sandbox-verdict-actions">
+                                        <button class="sim-action-btn btn-report" id="sim-action-report">FLAG & REPORT ATTACK</button>
+                                        <button class="sim-action-btn btn-safe" id="sim-action-safe">MARK SAFE / PROCEED</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Success Overlay / Level Complete -->
+                        <div class="sim-feedback-overlay hidden" id="sim-feedback-overlay">
+                            <div class="feedback-card">
+                                <h3 id="feedback-title">THREAT_DEFUSED_SUCCESSFULLY</h3>
+                                <div class="feedback-stats">
+                                    <div>SCENARIO_XP: <span class="text-neon-green" id="feedback-xp">+250 XP</span></div>
+                                    <div>DEFENSE_ACCURACY: <span class="text-neon-cyan" id="feedback-accuracy">100%</span></div>
+                                </div>
+                                <div class="feedback-writeup" id="feedback-explanation">
+                                    <!-- In-depth security analysis explanation -->
+                                </div>
+                                <button class="terminal-btn" id="feedback-close-btn">CONTINUE_TO_TERMINAL</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. TRUST & BREACH CENTER PANEL -->
+                <section class="console-panel" id="panel-trust-breach">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2>MODULE // SYSTEM_INTEL_SCANNER</h2>
+                        <button class="terminal-btn help-toggle-btn" data-help="trust-breach">[?] HELP_PROTOCOL</button>
+                    </div>
+                    <div class="help-protocol-box hidden" id="help-trust-breach">
+                        <div class="help-title">> PROTOCOL: WEBSITE_TRUST_BREACH_MANUAL</div>
+                        <ul class="help-list">
+                            <li><span class="help-bullet">*</span> <strong>Website Scanner:</strong> Probes domain names. Evaluates registrar age credibility, SSL/TLS certificate chains, and looks for HTTPS, HSTS, and Content-Security-Policy (CSP) headers.</li>
+                            <li><span class="help-bullet">*</span> <strong>Email Checker:</strong> Enter an email to query simulated database leak logs, locating compromised passwords, accounts, or leaked credentials.</li>
+                            <li><span class="help-bullet">*</span> <strong>Mitigation:</strong> After a scan, follow the recommended actions (MFA setup, credentials change) displayed on the screen to secure your data.</li>
+                        </ul>
+                    </div>
+                    <div class="panel-content trust-breach-container">
+                        <div class="tabs-header">
+                            <button class="tab-btn active" data-tab="tab-site-trust-scanner">WEBSITE_TRUST_SCANNER</button>
+                            <button class="tab-btn" data-tab="tab-email-breach-checker">EMAIL_CHECKER</button>
+                        </div>
+
+                        <!-- TAB A: Website Trust Score Scanner -->
+                        <div class="tab-content active" id="tab-site-trust-scanner">
+                            <div class="terminal-cmd-box">
+                                <div class="cmd-line">
+                                    <span class="prompt">root@ops:~# trust_scan --domain</span>
+                                    <div class="cmd-input-wrapper">
+                                        <input type="text" id="trust-domain-input" placeholder="example-commerce-site.com" autocomplete="off">
+                                        <button class="terminal-btn" id="trust-scan-btn">PROBE DOMAIN</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="scan-workspace">
+                                <div class="live-console-feed hidden" id="trust-console-log">
+                                    <!-- Streaming shell text -->
+                                </div>
+
+                                <div class="trust-report-container hidden" id="trust-report-section">
+                                    <div class="trust-report-layout">
+                                        <div class="trust-score-card">
+                                            <h3>TRUST_VERDICT</h3>
+                                            <div class="big-score-ring">
+                                                <svg viewBox="0 0 100 100">
+                                                    <circle cx="50" cy="50" r="45" class="track"></circle>
+                                                    <circle cx="50" cy="50" r="45" class="fill" id="trust-score-gauge" stroke-dasharray="282.7" stroke-dashoffset="282.7"></circle>
+                                                </svg>
+                                                <div class="score-display">
+                                                    <span id="trust-score-num">00</span>
+                                                    <span class="score-cap">/100</span>
+                                                </div>
+                                            </div>
+                                            <div class="trust-verdict-title" id="trust-verdict-title">EVALUATING</div>
+                                        </div>
+
+                                        <div class="trust-details-card">
+                                            <h3>INTEL_REPORT_SUMMARY</h3>
+                                            <div class="intel-indicators-grid" id="trust-indicators-grid">
+                                                <!-- Dynamic list of metrics (HTTPS, DNSSEC, Domain Age, Headers, etc.) -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB B: Data Breach Checker (using email) -->
+                        <div class="tab-content" id="tab-email-breach-checker">
+                            <div class="terminal-cmd-box">
+                                <div class="cmd-line">
+                                    <span class="prompt">root@ops:~# breach_query --email</span>
+                                    <div class="cmd-input-wrapper">
+                                        <input type="email" id="breach-email-input" placeholder="operator@ops-net.org" autocomplete="off">
+                                        <button class="terminal-btn" id="breach-query-btn">QUERY LEAKS</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="breach-workspace">
+                                <div class="breach-loading hidden" id="breach-loading-anim">
+                                    <div class="spinner-box">
+                                        <div class="double-bounce1"></div>
+                                        <div class="double-bounce2"></div>
+                                    </div>
+                                    <div class="loading-label">SCANNING LEAKED DATABASES...</div>
+                                </div>
+
+                                <div class="breach-results-section hidden" id="breach-results-section">
+                                    <div class="breach-summary-banner" id="breach-banner">
+                                        <!-- Red Alert Header -->
+                                    </div>
+                                    <div class="breach-leaks-grid" id="breach-leaks-list">
+                                        <!-- Leaks list -->
+                                    </div>
+                                    <div class="mitigation-ops-card">
+                                        <h3>RECOMMENDED_MITIGATION_PROTOCOLS</h3>
+                                        <div class="mitigation-flow" id="breach-mitigations">
+                                            <!-- Mitigation bullet details -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Trust & Breach PDF Report Card -->
+                        <div class="pdf-report-generator-box" style="margin-top: 30px; border-top: 1px dashed var(--border-color); padding-top: 20px; width: 100%;">
+                            <h4 style="font-size: 13px; letter-spacing: 1px; color: var(--neon-green); margin-bottom: 8px;">EXPORT_INTEL_SCAN_REPORT</h4>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Compile and export all logs, alerts, and telemetry for this module into a secure, encrypted PDF document.</p>
+                            <button class="terminal-btn btn-download-pdf" data-module="trust-breach" style="border-color: var(--neon-green); color: var(--neon-green); text-shadow: var(--glow-shadow-green);">DOWNLOAD_ENCRYPTED_PDF</button>
+                            <p class="pdf-decryption-note" style="font-size: 11px; color: var(--text-dim); margin-top: 8px; line-height: 1.4;"></p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. SMS BOMBING DEFENDER PANEL -->
+                <section class="console-panel" id="panel-sms-shield">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2>MODULE // SMS_BOMBING_DEFENDER</h2>
+                        <button class="terminal-btn help-toggle-btn" data-help="sms-shield">[?] HELP_PROTOCOL</button>
+                    </div>
+                    
+                    <div class="help-protocol-box hidden" id="help-sms-shield">
+                        <div class="help-title">> PROTOCOL: SMS_BOMBING_PREVENTION_MANUAL</div>
+                        <ul class="help-list">
+                            <li><span class="help-bullet">*</span> <strong>SMS Bombing:</strong> An attack vector where automated bots abuse public APIs (e.g., login/registration forms on ecommerce websites) to flood a target phone number with hundreds of OTP and authentication messages.</li>
+                            <li><span class="help-bullet">*</span> <strong>API Firewall:</strong> Enabling the shield simulates rate limiting and API gateway security that blocks automated scraper bots from triggering SMS gateways.</li>
+                            <li><span class="help-bullet">*</span> <strong>Real-Life Defense:</strong> In real life, activate Do Not Disturb (DND), use intelligent SMS filtration tools, or set up rate limit headers on your own developer portals.</li>
+                        </ul>
+                    </div>
+
+                    <div class="panel-content sms-shield-container">
+                        <div class="sms-shield-layout">
+                            <!-- Left: Interactive Simulator -->
+                            <div class="sms-simulator-card">
+                                <h3>BOMBING_SIMULATOR_SANDBOX</h3>
+                                
+                                <div class="terminal-cmd-box" style="margin-top: 15px;">
+                                    <div class="cmd-line">
+                                        <span class="prompt">root@ops:~# shield_setup --phone</span>
+                                        <div class="cmd-input-wrapper">
+                                            <input type="tel" id="sms-phone-input" placeholder="Enter Mobile Number (e.g. +91 98765 43210)" autocomplete="off">
+                                            <button class="terminal-btn" id="sms-sim-btn">MOUNT ATTACK</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="simulator-workspace">
+                                    <div class="shield-toggle-row">
+                                        <span class="shield-label">SHIELD STATUS:</span>
+                                        <label class="cyber-switch">
+                                            <input type="checkbox" id="sms-shield-toggle">
+                                            <span class="switch-slider"></span>
+                                        </label>
+                                        <span class="shield-status-indicator text-neon-red" id="sms-shield-status-text">OFFLINE (UNPROTECTED)</span>
+                                    </div>
+
+                                    <div class="simulator-arena">
+                                        <!-- Visual Phone Representation -->
+                                        <div class="phone-mockup-frame" id="phone-vibe-container">
+                                            <div class="phone-screen">
+                                                <div class="phone-header">
+                                                    <span class="phone-time">12:00</span>
+                                                    <span class="phone-icons">📶 🔋</span>
+                                                </div>
+                                                <div class="phone-display" id="phone-notifications-area">
+                                                    <div class="phone-status-overlay">SHIELD: OFF</div>
+                                                    <div class="phone-placeholder-text">Waiting for attack payload...</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Live Log Feed -->
+                                        <div class="simulator-log-feed" id="sms-log-container">
+                                            <div class="log-entry log-system">Console initialized. Ready for SMS bombing simulation.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right: Real-World Prevention & Info Guide -->
+                            <div class="sms-guide-card">
+                                <h3>SMS_BOMBING_THREAT_REPORT</h3>
+                                
+                                <div class="guide-scroll-container">
+                                    <!-- A. How Bombing Works Section -->
+                                    <div class="guide-section" style="border-bottom: 1px dashed rgba(255, 51, 102, 0.2); padding-bottom: 15px; margin-bottom: 15px;">
+                                        <h4 style="color: var(--neon-orange); text-shadow: var(--glow-shadow-orange); font-size: 13px;">HOW SMS BOMBING WORKS</h4>
+                                        <p>SMS bombing is a denial-of-service (DoS) attack targeting a mobile number. It does <strong>not</strong> mean the attacker hacked your phone. Instead:</p>
+                                        <ul style="list-style-type: square; margin-left: 15px; font-size: 12px; color: var(--text-secondary); line-height: 1.4; display: flex; flex-direction: column; gap: 5px;">
+                                            <li><strong style="color: var(--text-primary);">API Exploitation:</strong> Attackers write automated scripts (like BOMBitUP or custom Python scripts) that target public APIs of popular websites (e.g., login, registration, OTP gateways of ecommerce, ride sharing, and food delivery portals).</li>
+                                            <li><strong style="color: var(--text-primary);">Bulk OTP Flooding:</strong> Since these target APIs lack rate limits or CAPTCHAs, the script loops through dozens of portals rapidly, inputting the victim's phone number to trigger a flood of OTP text messages and verification pings.</li>
+                                            <li><strong style="color: var(--text-primary);">Vulnerability Impact:</strong> The victim's phone becomes unusable due to constant notification buzzes, battery drainage, network congestion, and distraction.</li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- B. How to Prevent It Section -->
+                                    <div class="guide-section">
+                                        <h4 style="font-size: 13px;">HOW TO PREVENT & NEUTRALIZE BOMBING</h4>
+                                        <p>If you are currently under attack, use the following tools and mitigation steps to stop the flood and protect your profile:</p>
+                                        
+                                        <div class="guide-action-box" style="margin-bottom: 15px;">
+                                            <span class="action-title">1. ACTIVATE OPERATOR-LEVEL DND (DO NOT DISTURB)</span>
+                                            <p>Registering with DND blocks bulk promotional SMS gateways. Send an SMS containing <strong>"START 0"</strong> to <strong>1909</strong> or configure settings inside your cellular operator's mobile application.</p>
+                                        </div>
+
+                                        <div class="guide-action-box" style="margin-bottom: 15px; background-color: rgba(0, 150, 255, 0.05); border-color: rgba(0, 150, 255, 0.3);">
+                                            <span class="action-title" style="color: var(--neon-cyan); text-shadow: var(--glow-shadow-cyan);">2. INSTALL INTELLIGENT SMS FILTERS</span>
+                                            <p>Use messaging applications that automatically detect spam peaks and route incoming texts silently:</p>
+                                            <ul style="font-size: 11px; color: var(--text-secondary); margin-left: 10px; margin-top: 5px; list-style-type: circle;">
+                                                <li><strong>Microsoft SMS Organizer:</strong> Automatically groups all OTPs/promotions into a separate, silent transactions tab with no buzz alerts.</li>
+                                                <li><strong>Google Messages:</strong> Uses local AI models to filter spam spikes and auto-mute telemarketing blocks.</li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="guide-action-box" style="margin-bottom: 15px;">
+                                            <span class="action-title">3. TEMPORARY CALL/SMS SUSPENSION</span>
+                                            <p>In extreme cases, call your service provider's customer service lines to request a temporary suspension of bulk web-based text gateways for 2-4 hours to break the bomber loop.</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- C. Developer Mitigation Section -->
+                                    <div class="guide-section">
+                                        <h4 style="color: var(--neon-green); text-shadow: var(--glow-shadow-green); font-size: 13px;">DEVELOPER PORTAL API FIREWALLS (PREVENTING ABUSE)</h4>
+                                        <p>Web developers must protect their authentication API endpoints so spammers cannot abuse their sites to bomb users:</p>
+                                        <div class="code-terminal">
+                                            <div class="code-header">
+                                                <span>api_security_config.json</span>
+                                            </div>
+                                            <pre class="code-body"><code>{
+  "rate_limiting": {
+    "window_ms": 60000,
+    "max_requests_per_phone": 3,
+    "block_duration_ms": 300000
+  },
+  "security": {
+    "require_recaptcha_v3": true,
+    "check_device_integrity": true
+  }
+}</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- SMS Shield PDF Report Card -->
+                        <div class="pdf-report-generator-box" style="margin-top: 30px; border-top: 1px dashed var(--border-color); padding-top: 20px; width: 100%;">
+                            <h4 style="font-size: 13px; letter-spacing: 1px; color: var(--neon-orange); margin-bottom: 8px;">EXPORT_SMS_SHIELD_DEFENSE_REPORT</h4>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Compile and export all logs, alerts, and telemetry for this module into a secure, encrypted PDF document.</p>
+                            <button class="terminal-btn btn-download-pdf" data-module="sms-shield" style="border-color: var(--neon-orange); color: var(--neon-orange); text-shadow: var(--glow-shadow-orange);">DOWNLOAD_ENCRYPTED_PDF</button>
+                            <p class="pdf-decryption-note" style="font-size: 11px; color: var(--text-dim); margin-top: 8px; line-height: 1.4;"></p>
+                        </div>
+                    </div>
+                </section>
+
+
+
+                <!-- 6. PASSWORD CHECKER PANEL -->
+                <section class="console-panel" id="panel-password-checker">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2>MODULE // CREDENTIAL_ENTROPY_AUDITOR</h2>
+                        <button class="terminal-btn help-toggle-btn" data-help="password-checker">[?] HELP_PROTOCOL</button>
+                    </div>
+                    
+                    <div class="help-protocol-box hidden" id="help-password-checker">
+                        <div class="help-title">> PROTOCOL: PASSWORD_SECURITY_MANUAL</div>
+                        <ul class="help-list">
+                            <li><span class="help-bullet">*</span> <strong>Objective:</strong> Analyzes raw character entropy, checks for common patterns, and upgrades weak passwords to cryptographic resilience.</li>
+                            <li><span class="help-bullet">*</span> <strong>Entropy Score:</strong> Calculates bit-strength based on length, letter casing, numbers, and special symbols.</li>
+                            <li><span class="help-bullet">*</span> <strong>Vulnerability Check:</strong> Warns if the entered text is a known common credential or too short.</li>
+                            <li><span class="help-bullet">*</span> <strong>Smart Upgrade Recommender:</strong> Takes your typed password and transforms it into a highly secure upgraded version utilizing advanced substitutions and padding.</li>
+                        </ul>
+                    </div>
+
+                    <div class="panel-content password-checker-container">
+                        <div class="terminal-cmd-box">
+                            <div class="cmd-line">
+                                <span class="prompt">root@ops:~# audit_password --input</span>
+                                <div class="cmd-input-wrapper">
+                                    <input type="text" id="password-input" placeholder="Type password here to audit..." autocomplete="off">
+                                    <button class="terminal-btn" id="password-scan-btn">AUDIT CREDENTIAL</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="password-workspace-grid">
+                            <!-- Left: Analysis Cards -->
+                            <div class="pass-analysis-card">
+                                <h3>CREDENTIAL_ENTROPY_ANALYSIS</h3>
+                                <div class="entropy-gauge-wrapper" style="text-align: center; margin: 20px 0;">
+                                    <div class="entropy-score-num" id="pass-entropy-score">00</div>
+                                    <div class="entropy-label" id="pass-entropy-label">NO CREDENTIAL</div>
+                                </div>
+                                <div class="pass-progress-wrapper" style="height: 6px; background: var(--bg-primary); border: 1px solid rgba(255, 0, 170, 0.15); border-radius: 3px; overflow: hidden; margin-bottom: 20px;">
+                                    <div id="pass-strength-bar" style="width: 0%; height: 100%; transition: width 0.3s ease; border-radius: 3px;"></div>
+                                </div>
+                                <div class="intel-indicators-grid" id="pass-metrics-grid">
+                                    <!-- Telemetry items -->
+                                </div>
+                            </div>
+
+                            <!-- Right: Upgrade Recommendations -->
+                            <div class="pass-upgrade-card">
+                                <h3>SMART_CREDENTIAL_UPGRADE</h3>
+                                <div class="upgrade-result-box hidden" id="pass-upgrade-box" style="margin-top: 10px;">
+                                    <p class="section-desc" style="margin-bottom: 10px;">Below is a cryptographically hardened recommendation constructed directly from your input:</p>
+                                    <div class="recommended-pass-display">
+                                        <span id="pass-recommended-text">-</span>
+                                        <button class="terminal-btn" id="pass-copy-btn" style="padding: 4px 10px; font-size: 11px;">COPY</button>
+                                    </div>
+                                    <div class="upgrade-rules-explained" id="pass-upgrade-rules-list">
+                                        <!-- Upgrade transformations list -->
+                                    </div>
+                                </div>
+                                <div class="explain-placeholder" id="pass-upgrade-placeholder">
+                                    Enter a password and execute the credential audit script to generate cryptographic recommendations.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Password Checker PDF Report Card -->
+                        <div class="pdf-report-generator-box" style="margin-top: 30px; border-top: 1px dashed var(--border-color); padding-top: 20px; width: 100%;">
+                            <h4 style="font-size: 13px; letter-spacing: 1px; color: var(--neon-pink); margin-bottom: 8px;">EXPORT_PASSWORD_AUDIT_REPORT</h4>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Compile and export all logs, alerts, and telemetry for this module into a secure, encrypted PDF document.</p>
+                            <button class="terminal-btn btn-download-pdf" data-module="password-checker" style="border-color: var(--neon-pink); color: var(--neon-pink); text-shadow: var(--glow-shadow-pink);">DOWNLOAD_ENCRYPTED_PDF</button>
+                            <p class="pdf-decryption-note" style="font-size: 11px; color: var(--text-dim); margin-top: 8px; line-height: 1.4;"></p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. DIGITAL FOOTPRINT CHECKER PANEL -->
+                <section class="console-panel" id="panel-footprint-checker">
+                    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h2>MODULE // DIGITAL_FOOTPRINT_AUDITOR</h2>
+                        <button class="terminal-btn help-toggle-btn" data-help="footprint-checker">[?] HELP_PROTOCOL</button>
+                    </div>
+                    
+                    <div class="help-protocol-box hidden" id="help-footprint-checker">
+                        <div class="help-title">> PROTOCOL: DIGITAL_FOOTPRINT_MITIGATION_MANUAL</div>
+                        <ul class="help-list">
+                            <li><span class="help-bullet">*</span> <strong>Username Exposure:</strong> Reusing the same username or handle across multiple services links your posts, profile information, and locations, making you an easy target for doxing.</li>
+                            <li><span class="help-bullet">*</span> <strong>EXIF Metadata:</strong> Photos taken by smartphones embed metadata (device model, camera coordinates, and time). Social media or forums may leak this, revealing your physical address.</li>
+                            <li><span class="help-bullet">*</span> <strong>Google Dorking:</strong> Attackers use advanced search syntax (e.g. `filetype:pdf "Name"`) to retrieve unindexed resumes, spreadsheets containing phone numbers, or configuration files.</li>
+                        </ul>
+                    </div>
+
+                    <div class="panel-content footprint-checker-container">
+                        <div class="tabs-header">
+                            <button class="tab-btn active" data-tab="tab-username-scanner">USERNAME_EXPOSURE_CHECK</button>
+                            <button class="tab-btn" data-tab="tab-exif-analyzer">EXIF_METADATA_ANALYZER</button>
+                            <button class="tab-btn" data-tab="tab-google-dorks">OSINT_DORKING_ASSISTANT</button>
+                        </div>
+
+                        <!-- TAB A: Username Exposure Simulator -->
+                        <div class="tab-content active" id="tab-username-scanner">
+                            <div class="terminal-cmd-box">
+                                <div class="cmd-line">
+                                    <span class="prompt">root@ops:~# osint_profile --username</span>
+                                    <div class="cmd-input-wrapper">
+                                        <input type="text" id="footprint-username-input" placeholder="Enter target username..." autocomplete="off">
+                                        <button class="terminal-btn" id="footprint-user-scan-btn">SCAN ACCOUNTS</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="scan-workspace">
+                                <div class="live-console-feed hidden" id="footprint-username-console">
+                                    <!-- Dynamic text stream -->
+                                </div>
+
+                                <div class="footprint-results-grid hidden" id="footprint-username-results">
+                                    <div class="footprint-score-card">
+                                        <h3>REUSE_EXPOSURE</h3>
+                                        <div class="exposure-value text-neon-yellow" id="footprint-exposure-level">EVALUATING</div>
+                                        <div class="exposure-desc">This username was found registered on multiple networks. This links your activities across various services.</div>
+                                    </div>
+                                    <div class="footprint-detail-card">
+                                        <h3>EXPOSED_PLATFORMS_MAP</h3>
+                                        <div class="exposed-platforms-grid" id="footprint-platforms-list">
+                                            <!-- Platform status tags -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB B: EXIF Metadata Extractor -->
+                        <div class="tab-content" id="tab-exif-analyzer">
+                            <div class="exif-layout-grid">
+                                <!-- Drag and Drop Area -->
+                                <div class="exif-upload-area" id="exif-drop-zone">
+                                    <div class="upload-icon">📷</div>
+                                    <div class="upload-text">DRAG & DROP IMAGE FILE HERE OR CLICK TO UPLOAD</div>
+                                    <div class="upload-subtext">Supports JPG/JPEG images. Files are audited locally in the browser; no data is uploaded to remote servers.</div>
+                                    <input type="file" id="exif-file-input" accept="image/jpeg" style="display: none;">
+                                </div>
+
+                                <!-- Metadata Results display -->
+                                <div class="exif-report-card">
+                                    <h3>METADATA_ANALYSIS_REPORT</h3>
+                                    
+                                    <div id="exif-placeholder-text" class="explain-placeholder">
+                                        Drag/Drop a camera-captured photo to extract embedded EXIF parameters (GPS geolocation, device data, capture timestamps).
+                                    </div>
+
+                                    <div id="exif-results-box" class="exif-results-box hidden">
+                                        <div class="exif-status-indicator" id="exif-threat-badge">NO_METADATA_LEAK</div>
+                                        
+                                        <div class="exif-preview-container" style="text-align: center; margin: 12px 0;">
+                                            <img id="exif-preview-img" src="" alt="EXIF Source Preview" style="max-width: 100%; max-height: 180px; border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 4px; box-shadow: 0 0 12px rgba(2,7,20,0.8); object-fit: contain;">
+                                        </div>
+                                        
+                                        <div class="exif-telemetry-grid">
+                                            <div class="telemetry-item">
+                                                <span class="telemetry-lbl">CAPTURE_DEVICE:</span>
+                                                <span class="telemetry-val" id="exif-val-device">-</span>
+                                            </div>
+                                            <div class="telemetry-item">
+                                                <span class="telemetry-lbl">TIMESTAMP:</span>
+                                                <span class="telemetry-val" id="exif-val-time">-</span>
+                                            </div>
+                                            <div class="telemetry-item">
+                                                <span class="telemetry-lbl">COORDINATES:</span>
+                                                <span class="telemetry-val text-neon-orange" id="exif-val-coords">-</span>
+                                            </div>
+                                            <div class="telemetry-item">
+                                                <span class="telemetry-lbl">SOFTWARE:</span>
+                                                <span class="telemetry-val" id="exif-val-software">-</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="exif-map-simulation hidden" id="exif-map-sim">
+                                            <div class="map-simulation-grid" id="map-simulation-visual">
+                                                <!-- Visual radar animation/coordinates map simulation -->
+                                            </div>
+                                            <div class="map-coordinates-feed" id="map-coords-feed">GPS LOCK IN PROGRESS...</div>
+                                        </div>
+
+                                        <div class="exif-mitigation-steps">
+                                            <h4 style="color: var(--neon-cyan); margin-bottom: 5px;">DEFENSIVE ACTIONS:</h4>
+                                            <ul style="list-style-type: square; margin-left: 15px; font-size: 11px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 4px;">
+                                                <li>Enable "Remove location data" in your camera settings before sharing photos online.</li>
+                                                <li>Use tools like ExifTool (CLI) or mobile apps (e.g. Scrambled EXIF) to scrub metadata before publishing.</li>
+                                                <li>Be aware that messaging services (WhatsApp/Signal) strip EXIF, but direct forum/drive uploads keep it.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB C: Google Dorking Assistant -->
+                        <div class="tab-content" id="tab-google-dorks">
+                            <p class="section-desc">Search engine dorking uses advanced operators to index sensitive data leaks. Input your information to generate audit links and check your exposures.</p>
+                            
+                            <div class="dorking-input-grid">
+                                <div class="form-row">
+                                    <label for="dork-name">FULL_NAME:</label>
+                                    <input type="text" id="dork-name" placeholder="e.g. Bhavy Modi" autocomplete="off">
+                                </div>
+                                <div class="form-row">
+                                    <label for="dork-email">EMAIL_ADDRESS:</label>
+                                    <input type="email" id="dork-email" placeholder="e.g. operator@gmail.com" autocomplete="off">
+                                </div>
+                                <div class="form-row">
+                                    <label for="dork-username">CODENAME/USER:</label>
+                                    <input type="text" id="dork-username" placeholder="e.g. cyber_operator" autocomplete="off">
+                                </div>
+                                <div class="form-row">
+                                    <label for="dork-domain">TARGET_DOMAIN:</label>
+                                    <input type="text" id="dork-domain" placeholder="e.g. mycompany.com" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <button class="terminal-btn" id="dork-generate-btn" style="margin-top: 15px; width: 100%;">GENERATE AUDIT DORKS</button>
+
+                            <div class="dorking-results-container hidden" id="dorking-results-container">
+                                <h3>OSINT_GOOGLE_DORK_QUERIES</h3>
+                                <div class="dorking-links-list" id="dorking-links-list">
+                                    <!-- Dynamic generated dorks list -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Footprint Checker PDF Report Card -->
+                        <div class="pdf-report-generator-box" style="margin-top: 30px; border-top: 1px dashed var(--border-color); padding-top: 20px; width: 100%;">
+                            <h4 style="font-size: 13px; letter-spacing: 1px; color: var(--neon-cyan); margin-bottom: 8px;">EXPORT_FOOTPRINT_AUDIT_REPORT</h4>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Compile and export all logs, alerts, and telemetry for this module into a secure, encrypted PDF document.</p>
+                            <button class="terminal-btn btn-download-pdf" data-module="footprint-checker" style="border-color: var(--neon-cyan); color: var(--neon-cyan); text-shadow: var(--glow-shadow-cyan);">DOWNLOAD_ENCRYPTED_PDF</button>
+                            <p class="pdf-decryption-note" style="font-size: 11px; color: var(--text-dim); margin-top: 8px; line-height: 1.4;"></p>
+                        </div>
+                    </div>
+                </section>
+
+
+            </div>
+        </main>
+    </div>
+
+    <!-- GATEWAY AUTH OVERLAY -->
+    <div id="gateway-overlay" class="gateway-overlay">
+        <!-- Configuration Setup Card -->
+        <div class="gateway-card hidden" id="gateway-config-card">
+            <h3>GATEWAY // CONFIGURE_FIREBASE_CONNECTION</h3>
+            <p class="gateway-desc">No active Firebase configuration detected. Please paste your web app credentials config JSON (from the Firebase Console) to register this endpoint.</p>
+            <div class="gateway-form">
+                <div class="form-row">
+                    <label for="gateway-config-input">FIREBASE_CONFIG_JSON:</label>
+                    <textarea id="gateway-config-input" placeholder='{
+  "apiKey": "AIzaSy...",
+  "authDomain": "your-app.firebaseapp.com",
+  "projectId": "your-app",
+  "storageBucket": "your-app.appspot.com",
+  "messagingSenderId": "...",
+  "appId": "..."
+}' autocomplete="off"></textarea>
+                </div>
+                <button class="terminal-btn btn-auth" id="btn-save-config">MOUNT CONNECTION</button>
+                <div class="gateway-error-text" id="config-error-msg"></div>
+            </div>
+        </div>
+
+        <!-- Login Card Page -->
+        <div class="gateway-card hidden" id="gateway-login-card">
+            <div class="gateway-header">
+                <pre class="ascii-auth-logo">
+ ██████╗  █████╗ ████████╗███████╗
+██╔════╝ ██╔══██╗╚══██╔══╝██╔════╝
+██║  ███╗███████║   ██║   █████╗  
+██║   ██║██╔══██║   ██║   ██╔══╝  
+╚██████╔╝██║  ██║   ██║   ███████╗
+ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
+                </pre>
+                <div class="console-status-badge" style="justify-content: center; margin-bottom: 15px;">
+                    <span class="pulse-indicator status-online"></span>
+                    <span class="status-text gateway-status-text">INITIALIZING HANDSHAKE...</span>
+                </div>
+            </div>
+
+            <div class="auth-section" id="auth-login-section">
+                <h3>OPERATOR_ACCESS_PORTAL</h3>
+                <div class="gateway-form">
+                    <!-- Decoy inputs to prevent browser autocomplete -->
+                    <input type="text" name="decoy_username" style="position: absolute; top: -9999px; left: -9999px;" tabindex="-1">
+                    <input type="password" name="decoy_password" style="position: absolute; top: -9999px; left: -9999px;" tabindex="-1">
+
+                    <div class="form-row">
+                        <label for="login-email">OPERATOR_EMAIL/CODENAME:</label>
+                        <input type="text" id="login-email" placeholder="operator@ops-net.org" autocomplete="off">
+                    </div>
+                    <div class="form-row">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <label for="login-password" style="margin-bottom: 0;">DECRYPTION_KEY (PASSWORD):</label>
+                            <a href="#" id="link-forgot-password" style="font-size: 11px; color: var(--neon-cyan); text-decoration: none; text-shadow: var(--glow-shadow-cyan); font-family: 'Share Tech Mono', monospace;">FORGOT_KEY?</a>
+                        </div>
+                        <div class="password-wrapper" style="position: relative; width: 100%;">
+                            <input type="password" id="login-password" placeholder="••••••••••••" autocomplete="new-password" style="width: 100%; padding-right: 35px; box-sizing: border-box;">
+                            <span class="password-toggle-eye" id="toggle-login-password">👁️</span>
+                        </div>
+                    </div>
+                    
+                    <!-- CAPTCHA Verification -->
+                    <div class="form-row captcha-container">
+                        <label for="login-captcha-input">SECURITY_VERIFICATION (CAPTCHA):</label>
+                        <div class="captcha-row">
+                            <canvas id="login-captcha-canvas" width="150" height="42"></canvas>
+                            <button type="button" class="captcha-refresh-btn" id="btn-login-captcha-refresh">[↻]</button>
+                            <input type="text" id="login-captcha-input" placeholder="CODE" autocomplete="off" maxlength="5">
+                        </div>
+                    </div>
+
+                    <button class="terminal-btn btn-auth" id="btn-login-submit">INITIATE DECRYPTION</button>
+                    <button class="terminal-btn btn-auth" id="btn-google-signin" style="border-color: var(--neon-cyan); text-shadow: var(--glow-shadow-cyan); margin-top: 8px;">SIGN_IN_WITH_GOOGLE</button>
+                    <div class="gateway-error-text" id="login-error-msg"></div>
+                    <p class="auth-toggle-link">No credentials? <a href="#/signup" id="link-show-signup">REGISTER_NEW_OPERATOR ></a></p>
+                </div>
+            </div>
+            
+            <div class="gateway-loading-bar hidden" id="gateway-loading-bar-login">
+                <div class="gateway-loading-bar-fill" id="gateway-loading-bar-login-fill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Signup Card Page -->
+        <div class="gateway-card hidden" id="gateway-signup-card">
+            <div class="gateway-header">
+                <pre class="ascii-auth-logo">
+ ██████╗  █████╗ ████████╗███████╗
+██╔════╝ ██╔══██╗╚══██╔══╝██╔════╝
+██║  ███╗███████║   ██║   █████╗  
+██║   ██║██╔══██║   ██║   ██╔══╝  
+╚██████╔╝██║  ██║   ██║   ███████╗
+ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
+                </pre>
+                <div class="console-status-badge" style="justify-content: center; margin-bottom: 15px;">
+                    <span class="pulse-indicator status-online"></span>
+                    <span class="status-text gateway-status-text">INITIALIZING HANDSHAKE...</span>
+                </div>
+            </div>
+
+            <div class="auth-section" id="auth-signup-section">
+                <h3>PROVISION_OPERATOR_CREDENTIALS</h3>
+                <div class="gateway-form">
+                    <!-- Decoy inputs to prevent browser autocomplete -->
+                    <input type="text" name="decoy_username_signup" style="position: absolute; top: -9999px; left: -9999px;" tabindex="-1">
+                    <input type="password" name="decoy_password_signup" style="position: absolute; top: -9999px; left: -9999px;" tabindex="-1">
+
+                    <div class="form-row">
+                        <label for="signup-username">CODENAME (USERNAME):</label>
+                        <input type="text" id="signup-username" placeholder="NEO_PHYTE" autocomplete="off">
+                    </div>
+                    <div class="form-row">
+                        <label for="signup-email">OPERATOR_EMAIL:</label>
+                        <input type="email" id="signup-email" placeholder="operator@ops-net.org" autocomplete="off">
+                    </div>
+                    <div class="form-row">
+                        <label for="signup-password">DECRYPTION_KEY (PASSWORD):</label>
+                        <div class="password-wrapper" style="position: relative; width: 100%;">
+                            <input type="password" id="signup-password" placeholder="••••••••••••" autocomplete="new-password" style="width: 100%; padding-right: 35px; box-sizing: border-box;">
+                            <span class="password-toggle-eye" id="toggle-signup-password">👁️</span>
+                        </div>
+                    </div>
+                    
+                    <!-- CAPTCHA Verification -->
+                    <div class="form-row captcha-container">
+                        <label for="signup-captcha-input">SECURITY_VERIFICATION (CAPTCHA):</label>
+                        <div class="captcha-row">
+                            <canvas id="signup-captcha-canvas" width="150" height="42"></canvas>
+                            <button type="button" class="captcha-refresh-btn" id="btn-signup-captcha-refresh">[↻]</button>
+                            <input type="text" id="signup-captcha-input" placeholder="CODE" autocomplete="off" maxlength="5">
+                        </div>
+                    </div>
+
+                    <button class="terminal-btn btn-auth" id="btn-signup-submit">PROVISION ACCESS</button>
+                    <div class="gateway-error-text" id="signup-error-msg"></div>
+                    <p class="auth-toggle-link">Already registered? <a href="#/login" id="link-show-login">&lt; ACCESS_PORTAL</a></p>
+                </div>
+            </div>
+            
+            <div class="gateway-loading-bar hidden" id="gateway-loading-bar-signup">
+                <div class="gateway-loading-bar-fill" id="gateway-loading-bar-signup-fill" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <!-- jsPDF Library for Encrypted Reports -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Mobile View Warning Overlay -->
+    <div id="mobile-warning-overlay">
+        <div class="mobile-warning-card">
+            <div class="warning-icon">☠️</div>
+            <h2>SYSTEM_ALERT: UNSUPPORTED_VIEWPORT</h2>
+            <p class="warning-msg">This Security Suite is not built for mobile devices.</p>
+            <p class="warning-instruction">Please open this console from your <strong>Laptop / PC</strong>.</p>
+            <div class="glow-line"></div>
+        </div>
+        
+        <div class="mobile-project-details-card">
+            <div style="font-weight: bold; margin-bottom: 8px; text-decoration: underline; color: var(--neon-cyan); letter-spacing: 1px;">Project Maker Details :</div>
+            <div>Name : Modi Bhavy H.</div>
+            <div>Enroll. No. : 246400316078</div>
+            <div>College : R.C. Technical Institute, Sola</div>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM MODAL -->
+    <div id="custom-confirm-modal" class="custom-modal">
+        <div class="custom-modal-content border-cyan">
+            <h3 class="modal-title text-neon-cyan">> CONFIRMATION_REQUIRED</h3>
+            <p id="custom-confirm-message" class="modal-message">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button id="custom-confirm-yes" class="terminal-btn-sm btn-safe">YES_AFFIRMED</button>
+                <button id="custom-confirm-no" class="terminal-btn-sm btn-danger">NO_ABORT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM ALERT MODAL -->
+    <div id="custom-alert-modal" class="custom-modal">
+        <div class="custom-modal-content border-red">
+            <h3 class="modal-title text-neon-red">> SYSTEM_ALERT</h3>
+            <p id="custom-alert-message" class="modal-message">System error warning.</p>
+            <div class="modal-actions">
+                <button id="custom-alert-ok" class="terminal-btn-sm btn-danger" style="width: 100%;">ACKNOWLEDGE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM PROMPT MODAL -->
+    <div id="custom-prompt-modal" class="custom-modal">
+        <div class="custom-modal-content border-cyan">
+            <h3 class="modal-title text-neon-cyan">> REQUEST_KEY_RESET</h3>
+            <p id="custom-prompt-message" class="modal-message">Enter your registered operator email:</p>
+            <div class="form-row" style="margin-bottom: 20px;">
+                <input type="email" id="custom-prompt-input" placeholder="operator@ops-net.org" autocomplete="off" style="width: 100%; text-align: center;">
+            </div>
+            <div class="modal-actions">
+                <button id="custom-prompt-submit" class="terminal-btn-sm btn-safe">SEND_RESET_LINK</button>
+                <button id="custom-prompt-cancel" class="terminal-btn-sm btn-danger">CANCEL</button>
+            </div>
+            <div class="gateway-error-text" id="custom-prompt-error-msg" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+
+
+
+    <!-- Developer Watermark -->
+    <div class="developer-watermark" id="developer-watermark" style="pointer-events: auto !important;">
+        <span class="watermark-close-btn" id="btn-close-watermark" style="pointer-events: auto !important; font-size: 22px !important; cursor: pointer !important; font-weight: bold; line-height: 1;" onclick="document.getElementById('developer-watermark').style.display='none';">&times;</span>
+        <div style="font-weight: bold; margin-bottom: 2px; text-decoration: underline; padding-right: 20px;">Project Maker Details :</div>
+        <div>Name : Modi Bhavy H.</div>
+        <div>Enroll. No. : 246400316078</div>
+        <div>College : R.C. Technical Institute, Sola</div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script src="threat-simulator.js"></script>
+    <script src="trust-breach.js"></script>
+    <script src="password-checker.js"></script>
+    <script src="sms-shield.js"></script>
+    <script src="footprint-checker.js"></script>
+    <script src="pdf-generator.js"></script>
+</body>
+</html>

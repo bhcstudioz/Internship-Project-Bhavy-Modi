@@ -1,0 +1,110 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // This security rules file assumes the following data structures:
+    //
+    // Collection: users
+    // Document ID: {userId} (matches Firebase Auth UID)
+    // Fields:
+    //   - username: string (required, length 1-30) - Custom Operator Codename
+    //   - xp: number (required, non-negative integer) - Accumulated Operator XP
+    //   - scenariosSolved: map (required) - Map of level ID keys to booleans
+    //   - scansDone: map (required) - Map of audit type keys to count integers
+    //   - updatedAt: timestamp (required) - Server timestamp when updated
+    //
+    // ===============================================================
+
+    match /users/{userId} {
+      // Allow read publicly to support codename-based email lookup, writes only for the owner
+      allow read: if true;
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data);
+      allow delete: if false;
+    }
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if user owns the resource
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Check if the document has only the allowed fields
+    function hasOnlyAllowedFields(data, allowedFields) {
+      return data.keys().hasOnly(allowedFields);
+    }
+
+    // Check if the document has all required fields
+    function hasRequiredFields(data, requiredFields) {
+      return data.keys().hasAll(requiredFields);
+    }
+
+    // Validate that a timestamp is recent (within the last 5 minutes)
+    function isRecent(time) {
+      return time is timestamp &&
+             time > request.time - duration.value(5, 'm') &&
+             time <= request.time;
+    }
+
+    // Validate the scenariosSolved map structure and types
+    function isValidScenarios(scenarios) {
+      return scenarios is map &&
+             scenarios.keys().hasOnly(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']) &&
+             scenarios.keys().hasAll(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']) &&
+             scenarios['1'] is bool &&
+             scenarios['2'] is bool &&
+             scenarios['3'] is bool &&
+             scenarios['4'] is bool &&
+             scenarios['5'] is bool &&
+             scenarios['6'] is bool &&
+             scenarios['7'] is bool &&
+             scenarios['8'] is bool &&
+             scenarios['9'] is bool &&
+             scenarios['10'] is bool;
+    }
+
+    // Validate the scansDone map structure and types
+    function isValidScans(scans) {
+      return scans is map &&
+             scans.keys().hasOnly(['url', 'domain', 'email', 'network', 'password', 'smsShield', 'footprint']) &&
+             scans.keys().hasAll(['url', 'domain', 'email', 'network', 'password', 'smsShield', 'footprint']) &&
+             scans['url'] is int && scans['url'] >= 0 &&
+             scans['domain'] is int && scans['domain'] >= 0 &&
+             scans['email'] is int && scans['email'] >= 0 &&
+             scans['network'] is int && scans['network'] >= 0 &&
+             scans['password'] is int && scans['password'] >= 0 &&
+             scans['smsShield'] is int && scans['smsShield'] >= 0 &&
+             scans['footprint'] is int && scans['footprint'] >= 0;
+    }
+
+    // Domain validation function called on both creates and updates
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(data, ['username', 'email', 'xp', 'scenariosSolved', 'scansDone', 'updatedAt']) &&
+             hasRequiredFields(data, ['username', 'email', 'xp', 'scenariosSolved', 'scansDone', 'updatedAt']) &&
+             data.username is string && 
+             data.username.size() >= 1 && 
+             data.username.size() <= 30 &&
+             data.email is string &&
+             data.email.size() >= 3 &&
+             data.email.size() <= 100 &&
+             data.xp is int && 
+             data.xp >= 0 && 
+             data.xp < 100000 &&
+             isValidScenarios(data.scenariosSolved) &&
+             isValidScans(data.scansDone) &&
+             isRecent(data.updatedAt);
+    }
+  }
+}
